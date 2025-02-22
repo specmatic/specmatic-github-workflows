@@ -20,6 +20,7 @@ runs:
 
     - name: Test and assemble
       run: ./gradlew check assemble
+      shell: bash
 
     - name: Generate and submit dependency graph
       uses: gradle/actions/dependency-submission@94baf225fe0a508e581a564467443d0e2379123b # v4.3.0
