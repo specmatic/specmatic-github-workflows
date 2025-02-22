@@ -1,6 +1,12 @@
 name: Java Build with Gradle
 description: Checkout, Pull Jdk 17, Setup Gradle, Test and Assemble, Submit Dependency Graph
 
+inputs:
+  gradle-extra-args:
+    description: "Extra arguments to pass to the gradle command"
+    required: false
+    default: ""
+
 outputs:
   specmatic-version:
     description: "The version of Specmatic that was used to run the tests"
@@ -19,8 +25,17 @@ runs:
       uses: gradle/actions/setup-gradle@94baf225fe0a508e581a564467443d0e2379123b # v4.3.0
 
     - name: Test and assemble
-      run: ./gradlew check assemble
+      run: ./gradlew check assemble ${{ inputs.gradle-extra-args }}
       shell: bash
 
     - name: Generate and submit dependency graph
       uses: gradle/actions/dependency-submission@94baf225fe0a508e581a564467443d0e2379123b # v4.3.0
+
+    - name: Verify version exists
+      run: grep -oP '^version\s*=\s*\K.*' gradle.properties
+      shell: bash
+
+    - name: Get version
+      id: specmatic-version
+      run: echo "specmatic-version=$(grep -oP '^version\s*=\s*\K.*' gradle.properties)" >> $GITHUB_OUTPUT
+      shell: bash
