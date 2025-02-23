@@ -37,10 +37,11 @@ runs:
       uses: gradle/actions/dependency-submission@94baf225fe0a508e581a564467443d0e2379123b # v4.3.0
 
     - name: Verify version exists in ${{ inputs.version-properties-file }}
-      run: grep -oP '^version\s*=\s*\K.*' ${{ inputs.version-properties-file }}
+      run: grep '^\s*version\s*=' ${{ inputs.version-properties-file }}
       shell: bash
 
     - name: Get version
       id: specmatic-version
-      run: echo "specmatic-version=$(grep -oP '^version\s*=\s*\K.*' ${{ inputs.version-properties-file }})" >> $GITHUB_OUTPUT
+      # this is complex because some builds run on macos, which uses a different toolchain (bsd) than linux (gnu)
+      run: echo "specmatic-version=$(grep '^\s*version\s*=' ${{ inputs.version-properties-file }} | cut -d'=' -f2 | sed 's/^[[:space:]]*//') | head -n1" >> $GITHUB_OUTPUT
       shell: bash
