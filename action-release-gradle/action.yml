@@ -1,5 +1,5 @@
-name: Publish with Gradle
-description: Publish jar artifacts to a repository using Gradle
+name: Create a github release with Gradle
+description: Bumps version, runs tests, creates tags, and makes a release using Gradle
 
 
 inputs:
@@ -43,8 +43,8 @@ runs:
         workflow: ${{ inputs.download-action-workflow }}
         allow_forks: false
 
-    - name: Publish artifacts
-      run: ./gradlew publish ${{ inputs.gradle-extra-args }}
+    - name: Release artifacts
+      run: ./gradlew release ${{ inputs.gradle-extra-args }}
       shell: bash
 
     - name: Get version
