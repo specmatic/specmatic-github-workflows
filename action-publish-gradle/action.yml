@@ -13,6 +13,11 @@ inputs:
     required: false
     default: "gradle.properties"
 
+  download-action-workflow:
+    description: "The workflow action name/path to download the artifacts"
+    required: false
+    default: gradle.yml
+
 outputs:
   specmatic-version:
     description: "The version of Specmatic that was used to run the tests"
@@ -33,7 +38,10 @@ runs:
       uses: gradle/actions/setup-gradle@94baf225fe0a508e581a564467443d0e2379123b # v4.3.0
 
     - name: Download Gradle Artifacts
-      uses: actions/download-artifact@v4
+      uses: dawidd6/action-download-artifact@v8
+      with:
+        workflow: ${{ inputs.download-action-workflow }}
+        allow_forks: false
 
     - name: Test and assemble
       run: ./gradlew publish ${{ inputs.gradle-extra-args }}
