@@ -45,3 +45,12 @@ runs:
       # this is complex because some builds run on macos, which uses a different toolchain (bsd) than linux (gnu)
       run: echo "specmatic-version=$(grep '^\s*version\s*=' ${{ inputs.version-properties-file }} | cut -d'=' -f2 | sed 's/^[[:space:]]*//') | head -n1" >> $GITHUB_OUTPUT
       shell: bash
+
+    - name: 'Upload Gradle Artifact'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Gradle Build Artifacts
+        path: |
+          build/
+          */build/
+        retention-days: 5
