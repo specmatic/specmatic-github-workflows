@@ -6,6 +6,7 @@ inputs:
   gradle-extra-args:
     description: "Extra arguments to pass to the gradle command"
     required: true
+    default: "--please-provide-gradle-extra-args"
 
   gradle-extra-env-file:
     description: "File containing any extra environments to set for the gradle task"
