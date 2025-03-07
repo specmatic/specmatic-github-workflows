@@ -23,6 +23,11 @@ inputs:
     required: false
     default: gradle.yml
 
+  pre-gradle-command:
+    description: "The command to run before the gradle command"
+    required: false
+    default: "echo 'No pre-gradle command specified'"
+
 outputs:
   specmatic-version:
     description: "The version of Specmatic that was used to run the tests"
