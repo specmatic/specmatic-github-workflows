@@ -8,6 +8,11 @@ inputs:
     required: true
     default: ""
 
+  gradle-extra-env-file:
+    description: "File containing any extra environments to set for the gradle task"
+    required: false
+    default: ""
+
   version-properties-file:
     description: "The file containing the version property"
     required: false
@@ -44,7 +49,11 @@ runs:
         allow_forks: false
 
     - name: Execute gradle with extra args
-      run: ./gradlew ${{ inputs.gradle-extra-args }}
+      run: |
+        if [ -f ${{inputs.gradle-extra-env-file}} ]; then
+          source ${{inputs.gradle-extra-env-file}}
+        fi
+        ./gradlew ${{ inputs.gradle-extra-args }}
       shell: bash
 
     - name: Get version
