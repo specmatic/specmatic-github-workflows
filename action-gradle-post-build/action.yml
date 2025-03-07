@@ -59,6 +59,7 @@ runs:
           echo "Sourcing ${{inputs.gradle-extra-env-file}}"
           source ${{inputs.gradle-extra-env-file}}
         fi
+        ${{ inputs.pre-gradle-command }}
         ./gradlew ${{ inputs.gradle-extra-args }}
       shell: bash
 
