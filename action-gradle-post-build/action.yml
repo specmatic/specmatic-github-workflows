@@ -28,6 +28,10 @@ inputs:
     required: false
     default: "echo 'No pre-gradle command specified'"
 
+  download-artifact-github-token:
+    description: "The GitHub token to use for downloading artifacts"
+    required: false
+
 outputs:
   specmatic-version:
     description: "The version of Specmatic that was used to run the tests"
@@ -52,6 +56,7 @@ runs:
       with:
         workflow: ${{ inputs.download-action-workflow }}
         allow_forks: false
+        github_token: ${{ inputs.download-artifact-github-token }}
 
     - name: Execute gradle with extra args
       run: |
