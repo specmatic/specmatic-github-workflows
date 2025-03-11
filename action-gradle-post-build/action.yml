@@ -56,7 +56,7 @@ runs:
       with:
         workflow: ${{ inputs.download-action-workflow }}
         allow_forks: false
-        github_token: ${{ inputs.download-artifact-github-token }}
+        github_token: ${{ inputs.download-artifact-github-token || secrets.GITHUB_TOKEN }}
 
     - name: Execute gradle with extra args
       run: |
