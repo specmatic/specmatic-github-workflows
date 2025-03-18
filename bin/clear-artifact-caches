@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+while true; do
+  # get the list of caches
+  cache_ids=$(gh cache list --limit 100 --json id --jq '.[].id')
+
+  # no more caches to delete
+  if [ -z "$cache_ids" ]; then
+    break
+  fi
+
+  # delete the caches in the background
+  for i in $cache_ids; do
+    gh cache delete $i &
+  done
+
+  # Don't overload the server, or your machine
+  sleep 2
+done
+
+# wait for all processes to finish
+wait

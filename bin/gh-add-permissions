@@ -1,0 +1,49 @@
+#!/usr/bin/env ruby
+require 'optparse'
+
+def info(message)
+  puts "\033[1;34m[INFO] #{message}\033[0m"
+end
+
+def warn(message)
+  puts "\033[1;33m[WARN] #{message}\033[0m"
+end
+
+def error(message)
+  puts "\033[1;31m[ERROR] #{message}\033[0m"
+end
+
+repo_full_name = %x{gh repo view --json nameWithOwner -q .nameWithOwner}.strip
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: #{File.basename(__FILE__)} [options]"
+
+  opts.on("-y", "--yes", "Automatically answer yes to prompts") do
+    options[:yes] = true
+  end
+
+  opts.on("-h", "--help", "Prints this help") do
+    puts opts
+    exit
+  end
+end.parse!
+
+if !options[:yes]
+  print "Do you want to add specmatic-builders as a maintainer on #{repo_full_name} (Y/n): "
+  user_input = gets.strip.downcase
+  if user_input.empty? || user_input == 'y' || user_input == 'yes' || user_input == 'Y'
+    options[:yes] = true
+  end
+end
+
+if options[:yes]
+  info("Adding specmatic-builders as a maintainer on #{repo_full_name}")
+  if system("gh api -X PUT -H 'Accept: application/vnd.github.v3+json' '/orgs/:owner/teams/specmatic-builders/repos/:owner/:repo' -f permission='maintain'")
+    info "Added specmatic-builders as a maintainer on #{repo_full_name}"
+  else
+    error "Failed to add specmatic-builders as a maintainer on #{repo_full_name}"
+  end
+else
+  warn "Exiting without making any changes."
+end

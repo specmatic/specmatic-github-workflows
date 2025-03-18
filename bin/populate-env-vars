@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+
+# usage:
+# eval "$(source ~/.specmatic-secrets; populate-credentials)"
+
+def info(message)
+  puts "\033[1;34m[INFO] #{message}\033[0m"
+end
+
+def warn(message)
+  puts "\033[1;33m[WARN] #{message}\033[0m"
+end
+
+def error(message)
+  puts "\033[1;31m[ERROR] #{message}\033[0m"
+end
+
+def secret(key)
+  value = ENV[key]
+  raise "#{key} not found or is blank!" if value.nil? || value.strip.empty?
+  value
+end
+
+mappings = {
+  "ORG_GRADLE_PROJECT_mavenCentralUsername" => "SPECMATIC_MAVEN_CENTRAL_USERNAME",
+  "ORG_GRADLE_PROJECT_mavenCentralPassword" => "SPECMATIC_MAVEN_CENTRAL_PASSWORD",
+  "ORG_GRADLE_PROJECT_signingInMemoryKey" => "SPECMATIC_GPG_PRIVATE_KEY",
+  "ORG_GRADLE_PROJECT_signingInMemoryKeyId" => "SPECMATIC_GPG_KEY_ID",
+  "ORG_GRADLE_PROJECT_signingInMemoryKeyPassword" => "SPECMATIC_GPG_PRIVATE_KEY_PASSPHRASE",
+  "ORG_GRADLE_PROJECT_specmaticPrivateUsername" => "SPECMATIC_GITHUB_USER",
+  "ORG_GRADLE_PROJECT_specmaticPrivatePassword" => "SPECMATIC_GITHUB_TOKEN",
+}
+
+exports = mappings.collect do |key, value|
+  "export #{key}='#{secret(value)}'"
+end
+
+puts exports.join("\n")
