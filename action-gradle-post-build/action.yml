@@ -71,6 +71,12 @@ runs:
         allow_forks: false
         github_token: ${{ inputs.download-artifact-github-token }}
 
+    - name: Download semver cli
+      run: |
+        wget -O /usr/local/bin/semver https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
+        chmod +x /usr/local/bin/semver
+      shell: bash
+
     - name: Execute gradle with extra args
       run: |
         if [ -f ${{ inputs.gradle-extra-env-file }} ]; then
