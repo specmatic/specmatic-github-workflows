@@ -18,8 +18,9 @@ OptionParser.new do |opts|
   end
 end.parse!
 
+
 if !options[:yes]
-  print "Do you want to add specmatic-builders as a maintainer on #{repo_full_name} (Y/n): "
+  print "Do you want to configure repository #{repo_full_name} (Y/n): "
   user_input = gets.strip.downcase
   if user_input.empty? || user_input == 'y' || user_input == 'yes' || user_input == 'Y'
     options[:yes] = true
@@ -27,12 +28,9 @@ if !options[:yes]
 end
 
 if options[:yes]
-  info("Adding specmatic-builders as a maintainer on #{repo_full_name}")
-  if system("gh api -X PUT -H 'Accept: application/vnd.github.v3+json' '/orgs/:owner/teams/specmatic-builders/repos/:owner/:repo' -f permission='maintain'")
-    info "Added specmatic-builders as a maintainer on #{repo_full_name}"
-  else
-    error "Failed to add specmatic-builders as a maintainer on #{repo_full_name}"
-  end
+  system("#{__dir__}/clear-artifact-caches")
+  system("#{__dir__}/upload-secrets")
+  system("#{__dir__}/gh-add-permissions")
 else
   warn "Exiting without making any changes."
 end
