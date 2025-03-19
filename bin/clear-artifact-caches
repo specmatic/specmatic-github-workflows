@@ -1,3 +1,8 @@
 #!/usr/bin/env ruby
 
+require_relative '../lib/logger'
+
+repo_full_name = %x{gh repo view --json nameWithOwner -q .nameWithOwner}.strip
+
+info("Clearing artifact caches for #{repo_full_name}")
 system("gh cache delete --all")
