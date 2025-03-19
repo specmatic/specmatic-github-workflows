@@ -31,6 +31,7 @@ if options[:yes]
   system("#{__dir__}/clear-artifact-caches")
   system("#{__dir__}/upload-secrets")
   system("#{__dir__}/gh-add-permissions --yes")
+  system("#{__dir__}/setup-dependabot")
 else
   warn "Exiting without making any changes."
 end
