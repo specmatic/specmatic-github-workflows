@@ -30,7 +30,7 @@ end
 if options[:yes]
   system("#{__dir__}/clear-artifact-caches")
   system("#{__dir__}/upload-secrets")
-  system("#{__dir__}/gh-add-permissions")
+  system("#{__dir__}/gh-add-permissions --yes")
 else
   warn "Exiting without making any changes."
 end
