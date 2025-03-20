@@ -37,11 +37,6 @@ inputs:
     required: false
     default: "false"
 
-outputs:
-  specmatic-version:
-    description: "The version of Specmatic that was used to run the tests"
-    value: ${{ steps.specmatic-version.outputs.version }}
-
 runs:
   using: "composite"
   steps:
@@ -85,10 +80,4 @@ runs:
         fi
         ${{ inputs.pre-gradle-command }}
         ./gradlew ${{ inputs.gradle-extra-args }}
-      shell: bash
-
-    - name: Get version
-      id: specmatic-version
-      # this is complex because some builds run on macos, which uses a different toolchain (bsd) than linux (gnu)
-      run: echo "specmatic-version=$(grep '^\s*version\s*=' ${{ inputs.version-properties-file }} | cut -d'=' -f2 | sed 's/^[[:space:]]*//') | head -n1" >> $GITHUB_OUTPUT
       shell: bash

@@ -12,11 +12,6 @@ inputs:
     required: false
     default: "gradle.properties"
 
-outputs:
-  specmatic-version:
-    description: "The version of Specmatic that was used to run the tests"
-    value: ${{ steps.specmatic-version.outputs.version }}
-
 runs:
   using: "composite"
   steps:
@@ -40,12 +35,6 @@ runs:
 
     - name: Verify version exists in ${{ inputs.version-properties-file }}
       run: grep '^\s*version\s*=' ${{ inputs.version-properties-file }}
-      shell: bash
-
-    - name: Get version
-      id: specmatic-version
-      # this is complex because some builds run on macos, which uses a different toolchain (bsd) than linux (gnu)
-      run: echo "specmatic-version=$(grep '^\s*version\s*=' ${{ inputs.version-properties-file }} | cut -d'=' -f2 | sed 's/^[[:space:]]*//') | head -n1" >> $GITHUB_OUTPUT
       shell: bash
 
     - name: 'Upload Gradle Artifact'
