@@ -31,7 +31,7 @@ if options[:yes]
   system("#{__dir__}/clear-artifact-caches")
   system("#{__dir__}/upload-secrets")
   system("#{__dir__}/gh-add-permissions --yes")
-  system("#{__dir__}/setup-dependabot")
+  system("rm -rf .github/dependabot.yml .github/dependabot.yaml")
 else
   warn "Exiting without making any changes."
 end
