@@ -80,9 +80,9 @@ runs:
 
     - name: Execute gradle with extra args
       run: |
-        if [ -f ${{ inputs.gradle-extra-env-file }} ]; then
+        if [ -f "${{ inputs.gradle-extra-env-file }}" ]; then
           echo "Sourcing ${{ inputs.gradle-extra-env-file }}"
-          source ${{ inputs.gradle-extra-env-file }}
+          source "${{ inputs.gradle-extra-env-file }}"
         fi
         ${{ inputs.pre-gradle-command }}
         ./gradlew ${{ inputs.gradle-extra-args }}
