@@ -13,20 +13,16 @@ inputs:
     required: false
     default: ""
 
-  version-properties-file:
-    description: "The file containing the version property"
+  pre-gradle-command:
+    description: "The command to run before the gradle command"
     required: false
-    default: "gradle.properties"
+    default: "echo 'No pre-gradle command specified'"
 
   download-action-workflow:
     description: "The workflow action name/path to download the artifacts"
     required: false
     default: gradle.yml
 
-  pre-gradle-command:
-    description: "The command to run before the gradle command"
-    required: false
-    default: "echo 'No pre-gradle command specified'"
 
   download-artifact-github-token:
     description: "The GitHub token to use for downloading artifacts"

@@ -7,10 +7,15 @@ inputs:
     required: false
     default: ""
 
-  version-properties-file:
-    description: "The file containing the version property"
+  gradle-extra-env-file:
+    description: "File containing any extra environments to set for the gradle task"
     required: false
-    default: "gradle.properties"
+    default: ""
+
+  pre-gradle-command:
+    description: "The command to run before the gradle command"
+    required: false
+    default: "echo 'No pre-gradle command specified'"
 
   java-version:
     description: "The Java version to use"
@@ -37,15 +42,17 @@ runs:
       uses: gradle/actions/setup-gradle@94baf225fe0a508e581a564467443d0e2379123b # v4.3.0
 
     - name: Test and assemble
-      run: ./gradlew check assemble ${{ inputs.gradle-extra-args }}
+      run: |
+        if [ -f ${{ inputs.gradle-extra-env-file }} ]; then
+          echo "Sourcing ${{ inputs.gradle-extra-env-file }}"
+          source ${{ inputs.gradle-extra-env-file }}
+        fi
+        ${{ inputs.pre-gradle-command }}
+        ./gradlew check assemble ${{ inputs.gradle-extra-args }}
       shell: bash
 
     - name: Generate and submit dependency graph
       uses: gradle/actions/dependency-submission@94baf225fe0a508e581a564467443d0e2379123b # v4.3.0
-
-    - name: Verify version exists in ${{ inputs.version-properties-file }}
-      run: grep '^\s*version\s*=' ${{ inputs.version-properties-file }}
-      shell: bash
 
     - name: 'Upload Gradle Artifact'
       uses: actions/upload-artifact@v4
