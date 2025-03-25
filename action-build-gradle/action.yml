@@ -38,6 +38,12 @@ runs:
         java-version: "${{ inputs.java-version }}"
         distribution: "${{ inputs.java-distribution }}"
 
+    - name: Download semver cli
+      run: |
+        wget -O /usr/local/bin/semver https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
+        chmod +x /usr/local/bin/semver
+      shell: bash
+
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@94baf225fe0a508e581a564467443d0e2379123b # v4.3.0
 
