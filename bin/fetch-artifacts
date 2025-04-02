@@ -1,0 +1,74 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'fileutils'
+
+# Parse command-line arguments
+options = {}
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: #{$0} [options]"
+
+  opts.on('-a ARTIFACT', 'Artifact in groupId:artifactId:version format') do |artifact|
+    options[:artifact] = artifact
+  end
+
+  opts.on('-r REPO', 'Path to custom Maven repository') do |repo|
+    options[:repo] = repo
+  end
+
+  opts.on("-h", "--help", "Prints this help") do
+    puts opts
+    exit
+  end
+end
+
+parser.parse!
+
+if options[:artifact].nil? || options[:repo].nil?
+  puts "Error: Both --artifact and --repo options are required."
+  puts parser
+  exit 1
+end
+
+
+artifact = options[:artifact]
+custom_repo = options[:repo]
+
+
+
+group_id, artifact_id, version = artifact.split(':')
+unless group_id && artifact_id && version
+  puts "Error: Artifact must be in the format groupId:artifactId:version"
+  exit 1
+end
+
+group_path = group_id.gsub('.', '/')
+
+target_path = File.join(custom_repo, group_path, artifact_id, version)
+
+puts "Fetching #{artifact} into temporary repository..."
+temp_repo = "/tmp/temp-maven-repo-#{rand(10000)}"
+at_exit {
+  puts "Cleaning up temporary repository..."
+  FileUtils.rm_rf(temp_repo)
+}
+
+system("mvn dependency:get -Dartifact=#{artifact} -Dmaven.repo.local=#{temp_repo} -U") || raise("Maven command failed: #{$?}")
+
+artifact_dir = File.join(temp_repo, group_path, artifact_id, version)
+unless Dir.exist?(artifact_dir)
+  puts "Error: Failed to download #{artifact}. Check your settings.xml or artifact coordinates."
+  exit 1
+end
+
+puts "Copying artifact to #{target_path}..."
+FileUtils.rm_rf(custom_repo)
+FileUtils.mkdir_p(target_path)
+FileUtils.cp(Dir.glob("#{artifact_dir}/*"), target_path)
+
+
+puts "Done! Artifact #{artifact} is now in #{custom_repo}"
+Dir.foreach(target_path) do |file|
+  next if file == '.' || file == '..'
+  system("ls -al #{target_path}/#{file}")
+end
