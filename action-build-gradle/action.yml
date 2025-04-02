@@ -65,6 +65,8 @@ runs:
       with:
         name: Gradle Build Artifacts
         path: |
-          build/
-          */build/
+          build/reports
+          */build/reports
+          build/jacoco
+          */build/jacoco
         retention-days: 5
