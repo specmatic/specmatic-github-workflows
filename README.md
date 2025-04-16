@@ -35,3 +35,38 @@
            with:
              gradle-extra-args: "-Pfoo=bar" # pass any extra gradle args here
    ```
+
+## Scripts in the bin dir
+
+1. For the fetch scripts, create a `~/.m2/settings.xml` file. Be sure to define `SPECMATIC_GITHUB_USER` and `SPECMATIC_GITHUB_TOKEN` in your shell.
+
+   ```xml
+   <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+       <profiles>
+           <profile>
+               <activation>
+                 <activeByDefault>true</activeByDefault>
+               </activation>
+               <id>default</id>
+               <repositories>
+                   <repository>
+                       <id>central</id>
+                       <url>https://repo.maven.apache.org/maven2</url>
+                   </repository>
+                   <repository>
+                       <id>specmaticPrivate</id>
+                       <url>https://maven.pkg.github.com/znsio/specmatic-private-maven-repo</url>
+                   </repository>
+               </repositories>
+           </profile>
+       </profiles>
+       <servers>
+           <server>
+               <id>specmaticPrivate</id>
+               <username>${env.SPECMATIC_GITHUB_USER}</username>
+               <password>${env.SPECMATIC_GITHUB_TOKEN}</password>
+           </server>
+       </servers>
+   </settings>
+   ```
