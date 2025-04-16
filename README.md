@@ -55,6 +55,10 @@
                        <url>https://repo.maven.apache.org/maven2</url>
                    </repository>
                    <repository>
+                       <id>confluent</id>
+                       <url>https://packages.confluent.io/maven</url>
+                   </repository>
+                   <repository>
                        <id>specmaticPrivate</id>
                        <url>https://maven.pkg.github.com/znsio/specmatic-private-maven-repo</url>
                    </repository>
