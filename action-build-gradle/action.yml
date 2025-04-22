@@ -42,7 +42,7 @@ runs:
           source "${{ inputs.gradle-extra-env-file }}"
         fi
         ${{ inputs.pre-gradle-command }}
-        ./gradlew --parallel --build-cache -Dorg.gradle.jvmargs=-Xmx2048M check assemble ${{ inputs.gradle-extra-args }}
+        ./gradlew check assemble ${{ inputs.gradle-extra-args }}
       shell: bash
 
     - name: Generate and submit dependency graph
