@@ -85,5 +85,5 @@ runs:
           source "${{ inputs.gradle-extra-env-file }}"
         fi
         ${{ inputs.pre-gradle-command }}
-        ./gradlew --parallel --build-cache -Dorg.gradle.jvmargs=-Xmx2048M ${{ inputs.gradle-extra-args }}
+        ./gradlew ${{ inputs.gradle-extra-args }}
       shell: bash
