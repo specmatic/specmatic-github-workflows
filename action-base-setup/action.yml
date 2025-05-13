@@ -17,6 +17,11 @@ runs:
   steps:
     - uses: actions/checkout@v4
 
+    - name: Setup git
+      run: |
+        git config --global user.email "github-service-account@specmatic.io"
+        git config --global user.name "Specmatic GitHub Service Account"
+
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
