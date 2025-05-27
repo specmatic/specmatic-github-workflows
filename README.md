@@ -23,7 +23,7 @@
        permissions:
          contents: write # This is required so that the dependency check can push dependency graph to the github repository
        steps:
-         - uses: znsio/specmatic-github-workflows/action-build-gradle@main
+         - uses: specmatic/specmatic-github-workflows/action-build-gradle@main
            with:
              gradle-extra-args: "-Pfoo=bar" # pass any extra gradle args here
    ```
@@ -52,7 +52,7 @@
                    </repository>
                    <repository>
                        <id>specmaticPrivate</id>
-                       <url>https://maven.pkg.github.com/znsio/specmatic-private-maven-repo</url>
+                       <url>https://maven.pkg.github.com/specmatic/specmatic-private-maven-repo</url>
                    </repository>
                </repositories>
            </profile>

@@ -30,7 +30,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: znsio/specmatic-github-workflows/action-base-setup@main
+    - uses: specmatic/specmatic-github-workflows/action-base-setup@main
       with:
         java-version: ${{ inputs.java-version }}
         java-distribution: ${{ inputs.java-distribution }}
