@@ -46,7 +46,7 @@ runs:
       shell: bash
 
     - name: Generate and submit dependency graph
-      uses: gradle/actions/dependency-submission@94baf225fe0a508e581a564467443d0e2379123b # v4.3.0
+      uses: gradle/actions/dependency-submission@8379f6a1328ee0e06e2bb424dadb7b159856a326 # v4.4.0
 
     - name: 'Upload Gradle Artifact'
       uses: actions/upload-artifact@v4
