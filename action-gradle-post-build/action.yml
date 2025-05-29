@@ -73,6 +73,7 @@ runs:
         github_token: ${{ inputs.download-artifact-github-token }}
 
     - name: Download semver cli
+      if: runner.os != 'Windows'
       shell: bash
       run: |
         wget -O /usr/local/bin/semver https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
