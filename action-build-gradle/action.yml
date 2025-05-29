@@ -35,8 +35,7 @@ runs:
         java-version: ${{ inputs.java-version }}
         java-distribution: ${{ inputs.java-distribution }}
 
-    - name: Test and assemble (Linux/macOS)
-      if: runner.os != 'Windows'
+    - name: Test and assemble
       shell: bash
       run: |
         if [ -f "${{ inputs.gradle-extra-env-file }}" ]; then
@@ -45,24 +44,6 @@ runs:
         fi
         ${{ inputs.pre-gradle-command }}
         ./gradlew check assemble ${{ inputs.gradle-extra-args }}
-
-    - name: Test and assemble (Windows)
-      if: runner.os == 'Windows'
-      shell: pwsh
-      run: |
-        if (Test-Path "${{ inputs.gradle-extra-env-file }}") {
-          Write-Output "Sourcing ${{ inputs.gradle-extra-env-file }}"
-          Get-Content "${{ inputs.gradle-extra-env-file }}" | ForEach-Object {
-            if ($_ -match '^\s*([^#=]+)\s*=\s*(.*)$') {
-              $key = $matches[1].Trim()
-              $value = $matches[2].Trim()
-              Write-Output "Setting environment variable: $key"
-              [System.Environment]::SetEnvironmentVariable($key, $value, 'Process')
-            }
-          }
-        }
-        Invoke-Expression "${{ inputs.pre-gradle-command }}"
-        .\gradlew.bat check assemble ${{ inputs.gradle-extra-args }}
 
     - name: Generate and submit dependency graph
       uses: gradle/actions/dependency-submission@8379f6a1328ee0e06e2bb424dadb7b159856a326 # v4.4.0

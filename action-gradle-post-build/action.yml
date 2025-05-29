@@ -73,14 +73,12 @@ runs:
         github_token: ${{ inputs.download-artifact-github-token }}
 
     - name: Download semver cli
-      if: runner.os != 'Windows'
       shell: bash
       run: |
         wget -O /usr/local/bin/semver https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
         chmod +x /usr/local/bin/semver
 
-    - name: Execute gradle with extra args (Linux/macOS)
-      if: runner.os != 'Windows'
+    - name: Execute gradle with extra args
       shell: bash
       run: |
         if [ -f "${{ inputs.gradle-extra-env-file }}" ]; then
@@ -89,21 +87,3 @@ runs:
         fi
         ${{ inputs.pre-gradle-command }}
         ./gradlew ${{ inputs.gradle-extra-args }}
-
-    - name: Execute gradle with extra args (Windows)
-      if: runner.os == 'Windows'
-      shell: pwsh
-      run: |
-        if (Test-Path "${{ inputs.gradle-extra-env-file }}") {
-          Write-Output "Sourcing ${{ inputs.gradle-extra-env-file }}"
-          Get-Content "${{ inputs.gradle-extra-env-file }}" | ForEach-Object {
-            if ($_ -match '^\s*([^#=]+)\s*=\s*(.*)$') {
-              $key = $matches[1].Trim()
-              $value = $matches[2].Trim()
-              Write-Output "Setting environment variable: $key"
-              [System.Environment]::SetEnvironmentVariable($key, $value, 'Process')
-            }
-          }
-        }
-        Invoke-Expression "${{ inputs.pre-gradle-command }}"
-        .\gradlew.bat ${{ inputs.gradle-extra-args }}
