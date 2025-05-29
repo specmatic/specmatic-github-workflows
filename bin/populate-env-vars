@@ -17,6 +17,8 @@ mappings = {
   "ORG_GRADLE_PROJECT_signingInMemoryKeyPassword" => "SPECMATIC_GPG_PRIVATE_KEY_PASSPHRASE",
   "ORG_GRADLE_PROJECT_specmaticPrivateUsername" => "SPECMATIC_GITHUB_USER",
   "ORG_GRADLE_PROJECT_specmaticPrivatePassword" => "SPECMATIC_GITHUB_TOKEN",
+  "SPECMATIC_GITHUB_USER" => "SPECMATIC_GITHUB_USER",
+  "SPECMATIC_GITHUB_TOKEN" => "SPECMATIC_GITHUB_TOKEN",
 }
 
 exports = mappings.collect do |key, value|
