@@ -51,7 +51,7 @@ runs:
     - name: 'Upload Gradle Artifact'
       uses: actions/upload-artifact@v4
       with:
-        name: Gradle Build Artifacts
+        name: Gradle Build Artifacts (${{ runner.os }})
         path: |
           build/reports
           */build/reports
