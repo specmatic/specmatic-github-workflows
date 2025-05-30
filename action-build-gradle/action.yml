@@ -43,7 +43,7 @@ runs:
           source "${{ inputs.gradle-extra-env-file }}"
         fi
         ${{ inputs.pre-gradle-command }}
-        ./gradlew test assemble ${{ inputs.gradle-extra-args }}
+        ./gradlew check assemble ${{ inputs.gradle-extra-args }}
 
     - name: Generate and submit dependency graph
       uses: gradle/actions/dependency-submission@8379f6a1328ee0e06e2bb424dadb7b159856a326 # v4.4.0
