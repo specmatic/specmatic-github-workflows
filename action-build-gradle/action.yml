@@ -35,7 +35,8 @@ runs:
         java-version: ${{ inputs.java-version }}
         java-distribution: ${{ inputs.java-distribution }}
 
-    - name: Test and assemble
+    - name: Test and assemble (Linux)
+      if: runner.os == 'Linux'
       shell: bash
       run: |
         if [ -f "${{ inputs.gradle-extra-env-file }}" ]; then
@@ -44,6 +45,17 @@ runs:
         fi
         ${{ inputs.pre-gradle-command }}
         ./gradlew check assemble ${{ inputs.gradle-extra-args }}
+
+    - name: Test and assemble (MacOS/Windows)
+      if: runner.os != 'Linux'
+      shell: bash
+      run: |
+        if [ -f "${{ inputs.gradle-extra-env-file }}" ]; then
+          echo "Sourcing ${{ inputs.gradle-extra-env-file }}"
+          source "${{ inputs.gradle-extra-env-file }}"
+        fi
+        ${{ inputs.pre-gradle-command }}
+        ./gradlew test assemble ${{ inputs.gradle-extra-args }}
 
     - name: Generate and submit dependency graph
       uses: gradle/actions/dependency-submission@8379f6a1328ee0e06e2bb424dadb7b159856a326 # v4.4.0
