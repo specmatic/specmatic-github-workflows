@@ -1,0 +1,60 @@
+name: Java Build with Gradle
+description: Checkout, Pull Jdk 17, Setup Gradle, Test and Assemble, Submit Dependency Graph
+
+inputs:
+  gradle-extra-args:
+    description: "Extra arguments to pass to the gradle command"
+    required: false
+    default: ""
+
+  gradle-extra-env-file:
+    description: "File containing any extra environments to set for the gradle task"
+    required: false
+    default: ""
+
+  pre-gradle-command:
+    description: "The command to run before the gradle command"
+    required: false
+    default: "echo 'No pre-gradle command specified'"
+
+  java-version:
+    description: "The Java version to use"
+    required: false
+    default: "17"
+
+  java-distribution:
+    description: "The Java distribution to use"
+    required: false
+    default: "temurin"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: specmatic/specmatic-github-workflows/action-base-setup@main
+      with:
+        java-version: ${{ inputs.java-version }}
+        java-distribution: ${{ inputs.java-distribution }}
+
+    - name: Test and assemble
+      shell: bash
+      run: |
+        if [ -f "${{ inputs.gradle-extra-env-file }}" ]; then
+          echo "Sourcing ${{ inputs.gradle-extra-env-file }}"
+          source "${{ inputs.gradle-extra-env-file }}"
+        fi
+        ${{ inputs.pre-gradle-command }}
+        ./gradlew test assemble ${{ inputs.gradle-extra-args }}
+
+    - name: Generate and submit dependency graph
+      uses: gradle/actions/dependency-submission@8379f6a1328ee0e06e2bb424dadb7b159856a326 # v4.4.0
+
+    - name: 'Upload Gradle Artifact'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Gradle Build Artifacts (${{ runner.os }})
+        path: |
+          build/reports
+          */build/reports
+          build/jacoco
+          */build/jacoco
+        retention-days: 5
