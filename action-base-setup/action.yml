@@ -16,6 +16,7 @@ runs:
   using: "composite"
   steps:
     - name: Set up QEMU
+      if: runner.os != 'macos-latest'
       uses: docker/setup-qemu-action@v3
 
     - name: Set up Docker Buildx
