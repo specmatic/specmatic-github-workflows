@@ -27,6 +27,11 @@ inputs:
     required: false
     default: "temurin"
 
+  reportgenerator-extra-reports:
+    description: "Additional report files to include in ReportGenerator (semicolon-separated)"
+    required: false
+    default: ""
+
 runs:
   using: "composite"
   steps:
@@ -56,7 +61,7 @@ runs:
       if: matrix.os == 'ubuntu-latest'
       uses: danielpalme/ReportGenerator-GitHub-Action@v5
       with:
-        reports: build/reports/jacoco/*/*.xml;**/build/reports/jacoco/*/*.xml
+        reports: build/reports/jacoco/*/*.xml;**/build/reports/jacoco/*/*.xml${{ inputs.reportgenerator-extra-reports != '' && format(';{0}', inputs.reportgenerator-extra-reports) || '' }}
         targetdir: coveragereport
         reporttypes: Html;MarkdownSummaryGithub;MarkdownAssembliesSummary
 
@@ -74,7 +79,7 @@ runs:
         PR_NUMBER: ${{ github.event.number }}
 
     - name: Generate and submit dependency graph
-      uses: gradle/actions/dependency-submission@8379f6a1328ee0e06e2bb424dadb7b159856a326 # v4.4.0
+      uses: gradle/actions/dependency-submission@v4
 
     - name: 'Upload Gradle Artifact'
       uses: actions/upload-artifact@v4
