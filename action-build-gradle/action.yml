@@ -67,14 +67,14 @@ runs:
         ./gradlew test assemble ${{ inputs.gradle-extra-args }}
 
     - name: Setup .NET Core # Required to execute ReportGenerator
-      if: matrix.os == 'ubuntu-latest'
+      if: runner.os == 'Linux'
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.x
         dotnet-quality: 'ga'
 
     - name: ReportGenerator
-      if: matrix.os == 'ubuntu-latest'
+      if: runner.os == 'Linux'
       uses: danielpalme/ReportGenerator-GitHub-Action@v5
       with:
         reports: build/reports/jacoco/*/*.xml;**/build/reports/jacoco/*/*.xml${{ inputs.reportgenerator-extra-reports != '' && format(';{0}', inputs.reportgenerator-extra-reports) || '' }}
@@ -82,12 +82,12 @@ runs:
         reporttypes: Html;MarkdownSummaryGithub;MarkdownAssembliesSummary
 
     - name: Add coverage to build summary
-      if: matrix.os == 'ubuntu-latest'
+      if: runner.os == 'Linux'
       shell: bash
       run: cat coveragereport/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
 
     - name: Add coverage comment to PR (linux only)
-      if: matrix.os == 'ubuntu-latest' && inputs.github-token-for-pr-comment != '' && github.event_name == 'pull_request'
+      if: runner.os == 'Linux' && inputs.github-token-for-pr-comment != '' && github.event_name == 'pull_request'
       run: gh pr comment $PR_NUMBER --edit-last --create-if-none --body-file coveragereport/Summary.md
       shell: bash
       env:
