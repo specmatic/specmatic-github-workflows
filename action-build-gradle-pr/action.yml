@@ -27,6 +27,10 @@ inputs:
     required: false
     default: "temurin"
 
+  github-token-for-pr-comment:
+    description: "GitHub token for posting comments on pull requests"
+    required: false
+
   reportgenerator-extra-reports:
     description: "Additional report files to include in ReportGenerator (semicolon-separated)"
     required: false
