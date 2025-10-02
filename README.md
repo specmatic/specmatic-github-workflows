@@ -66,3 +66,20 @@
        </servers>
    </settings>
    ```
+
+## Setting up a new specmatic repository
+
+1. Clone/pull this repository
+2. Clone/pull the `specmatic-insights-terraform` repository
+3. Execute the following:
+
+   ```bash
+   export GPG_PASSPHRASE=...
+   # decrypt the secrets file
+   /path/to/specmatic-insights-terraform/bin/gpg-crypt decrypt specmatic-secrets.env.gpg
+   cd ../path-to-repo-you-want-to-setup
+   # load the secrets into the environment
+   source /path/to/specmatic-github-workflows/specmatic-secrets.env
+   # execute the setup script
+   /path/to/specmatic-github-workflows/bin/setup-repo [-y]
+   ```
