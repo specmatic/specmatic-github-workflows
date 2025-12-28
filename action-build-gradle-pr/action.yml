@@ -86,7 +86,7 @@ runs:
       uses: gradle/actions/dependency-submission@v5
 
     - name: 'Upload Gradle Artifact'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: Gradle Build Artifacts (${{ runner.os }})
         path: |
