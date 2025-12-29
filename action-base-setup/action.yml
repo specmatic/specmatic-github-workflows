@@ -43,6 +43,8 @@ runs:
         chmod +x /usr/local/bin/semver
 
     - uses: actions/checkout@v6
+      with:
+        persist-credentials: false
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v5
