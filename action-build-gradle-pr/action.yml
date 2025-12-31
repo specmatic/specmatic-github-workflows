@@ -76,7 +76,7 @@ runs:
 
     - name: Add coverage comment to PR (linux only)
       if: runner.os == 'Linux' && inputs.github-token-for-pr-comment != '' && github.event_name == 'pull_request'
-      run: gh pr comment $PR_NUMBER --edit-last --create-if-none --body-file coveragereport/Summary.md
+      run: gh pr comment $PR_NUMBER --edit-last --create-if-none --body-file coveragereport/Summary.md || true
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.github-token-for-pr-comment }}
