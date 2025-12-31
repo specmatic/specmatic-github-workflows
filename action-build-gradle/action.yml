@@ -95,6 +95,7 @@ runs:
         PR_NUMBER: ${{ github.event.number }}
 
     - name: Generate and submit dependency graph
+      if: github.event_name != 'pull_request'
       uses: gradle/actions/dependency-submission@v5
 
     - name: 'Upload Gradle Artifact'
