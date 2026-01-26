@@ -7,11 +7,6 @@ inputs:
     required: false
     default: ""
 
-  gradle-extra-env-file:
-    description: "File containing any extra environments to set for the gradle task"
-    required: false
-    default: ""
-
   pre-gradle-command:
     description: "The command to run before the gradle command"
     required: false
@@ -47,10 +42,6 @@ runs:
     - name: Test and assemble
       shell: bash
       run: |
-        if [ -f "${{ inputs.gradle-extra-env-file }}" ]; then
-          echo "Sourcing ${{ inputs.gradle-extra-env-file }}"
-          source "${{ inputs.gradle-extra-env-file }}"
-        fi
         ${{ inputs.pre-gradle-command }}
         ./gradlew --no-daemon test ${{ inputs.gradle-extra-args }}
 
