@@ -53,7 +53,7 @@ runs:
           source "${{ inputs.gradle-extra-env-file }}"
         fi
         ${{ inputs.pre-gradle-command }}
-        ./gradlew check assemble ${{ inputs.gradle-extra-args }}
+        ./gradlew --no-daemon check assemble ${{ inputs.gradle-extra-args }}
 
     - name: Test and assemble (MacOS/Windows)
       if: runner.os != 'Linux'
@@ -64,7 +64,7 @@ runs:
           source "${{ inputs.gradle-extra-env-file }}"
         fi
         ${{ inputs.pre-gradle-command }}
-        ./gradlew test assemble ${{ inputs.gradle-extra-args }}
+        ./gradlew --no-daemon test assemble ${{ inputs.gradle-extra-args }}
 
     - name: Setup .NET Core # Required to execute ReportGenerator
       if: runner.os == 'Linux'
