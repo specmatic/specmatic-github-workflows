@@ -64,7 +64,7 @@ runs:
       if: runner.os == 'Linux'
       uses: danielpalme/ReportGenerator-GitHub-Action@v5
       with:
-        reports: build/reports/jacoco/*/*.xml;**/build/reports/jacoco/*/*.xml${{ inputs.reportgenerator-extra-reports != '' && format(';{0}', inputs.reportgenerator-extra-reports) || '' }}
+        reports: build/reports/jacoco/*/*.xml;**/build/reports/jacoco/*/*.xml;build/reports/kover/*.xml;**/build/reports/kover/*.xml${{ inputs.reportgenerator-extra-reports != '' && format(';{0}', inputs.reportgenerator-extra-reports) || '' }}
         targetdir: coveragereport
         reporttypes: Html;MarkdownSummaryGithub;MarkdownAssembliesSummary
 
