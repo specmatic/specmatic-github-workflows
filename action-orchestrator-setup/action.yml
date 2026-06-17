@@ -35,32 +35,39 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Add orchestrator context to summary
-      if: ${{ inputs.orchestrator-run-suffix != '' }}
+    - name: Prepare orchestrator runtime
       shell: bash
+      env:
+        ORCHESTRATOR_RUN_SUFFIX: ${{ inputs.orchestrator-run-suffix }}
+        ENTERPRISE_VERSION: ${{ inputs.enterprise-version }}
+        GRADLE_SNAPSHOT_INIT_SCRIPT_PATH: ${{ inputs.gradle-snapshot-init-script-path }}
+        DOCKER_HUB_USERNAME: ${{ inputs.docker-hub-username }}
+        DOCKER_HUB_TOKEN: ${{ inputs.docker-hub-token }}
+        SETUP_SNAPSHOT_DOCKER_IMAGE: ${{ inputs.setup-snapshot-docker-image }}
       run: |
+        set -euo pipefail
+
+        if [[ -z "${ORCHESTRATOR_RUN_SUFFIX}" ]]; then
+          exit 0
+        fi
+
         echo "### Orchestrator" >> "$GITHUB_STEP_SUMMARY"
-        echo "Run: ${{ inputs.orchestrator-run-suffix }}" >> "$GITHUB_STEP_SUMMARY"
+        echo "Run: ${ORCHESTRATOR_RUN_SUFFIX}" >> "$GITHUB_STEP_SUMMARY"
 
-    - name: Install Gradle snapshot init script
-      if: ${{ inputs.orchestrator-run-suffix != '' && endsWith(inputs.enterprise-version, '-SNAPSHOT') && inputs.gradle-snapshot-init-script-path != '' }}
-      shell: bash
-      run: |
-        set -euo pipefail
+        if [[ ! "${ENTERPRISE_VERSION}" =~ -SNAPSHOT$ ]]; then
+          exit 0
+        fi
 
-        mkdir -p "$HOME/.gradle/init.d"
-        cp "${{ inputs.gradle-snapshot-init-script-path }}" "$HOME/.gradle/init.d/specmatic-snapshots.init.gradle"
+        if [[ -n "${GRADLE_SNAPSHOT_INIT_SCRIPT_PATH}" ]]; then
+          mkdir -p "$HOME/.gradle/init.d"
+          cp "${GRADLE_SNAPSHOT_INIT_SCRIPT_PATH}" "$HOME/.gradle/init.d/specmatic-snapshots.init.gradle"
+        fi
 
-    - name: Docker Login for orchestrator snapshot image
-      if: ${{ inputs.setup-snapshot-docker-image == 'true' && inputs.orchestrator-run-suffix != '' && endsWith(inputs.enterprise-version, '-SNAPSHOT') && inputs.docker-hub-username != '' && inputs.docker-hub-token != '' }}
-      shell: bash
-      run: echo "${{ inputs.docker-hub-token }}" | docker login -u "${{ inputs.docker-hub-username }}" --password-stdin
+        if [[ "${SETUP_SNAPSHOT_DOCKER_IMAGE}" == "true" ]]; then
+          if [[ -n "${DOCKER_HUB_USERNAME}" && -n "${DOCKER_HUB_TOKEN}" ]]; then
+            echo "${DOCKER_HUB_TOKEN}" | docker login -u "${DOCKER_HUB_USERNAME}" --password-stdin
+          fi
 
-    - name: Prepare snapshot image for orchestrator run
-      if: ${{ inputs.setup-snapshot-docker-image == 'true' && inputs.orchestrator-run-suffix != '' && endsWith(inputs.enterprise-version, '-SNAPSHOT') }}
-      shell: bash
-      run: |
-        set -euo pipefail
-
-        docker pull specmatic/enterprise-snapshot
-        docker tag specmatic/enterprise-snapshot specmatic/enterprise:latest
+          docker pull specmatic/enterprise-snapshot
+          docker tag specmatic/enterprise-snapshot specmatic/enterprise:latest
+        fi
