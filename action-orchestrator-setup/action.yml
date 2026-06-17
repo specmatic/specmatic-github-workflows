@@ -44,4 +44,4 @@ runs:
         DOCKER_HUB_USERNAME: ${{ inputs.docker-hub-username }}
         DOCKER_HUB_TOKEN: ${{ inputs.docker-hub-token }}
         SETUP_SNAPSHOT_DOCKER_IMAGE: ${{ inputs.setup-snapshot-docker-image }}
-      run: ${{ github.action_path }}/prepare-orchestrator-runtime.sh
+      run: bash "${{ github.action_path }}/prepare-orchestrator-runtime.sh"
