@@ -7,16 +7,6 @@ inputs:
     required: false
     default: ""
 
-  enterprise-version:
-    description: "Specmatic enterprise version under test"
-    required: false
-    default: ""
-
-  gradle-snapshot-init-script-path:
-    description: "Optional path to the Gradle init script to install for snapshot runs"
-    required: false
-    default: ""
-
   docker-hub-username:
     description: "Docker Hub username for snapshot image login"
     required: false
@@ -27,11 +17,6 @@ inputs:
     required: false
     default: ""
 
-  setup-snapshot-docker-image:
-    description: "Whether to pull and retag the enterprise snapshot image"
-    required: false
-    default: "false"
-
 runs:
   using: "composite"
   steps:
@@ -39,9 +24,6 @@ runs:
       shell: bash
       env:
         ORCHESTRATOR_RUN_SUFFIX: ${{ inputs.orchestrator-run-suffix }}
-        ENTERPRISE_VERSION: ${{ inputs.enterprise-version }}
-        GRADLE_SNAPSHOT_INIT_SCRIPT_PATH: ${{ inputs.gradle-snapshot-init-script-path }}
         DOCKER_HUB_USERNAME: ${{ inputs.docker-hub-username }}
         DOCKER_HUB_TOKEN: ${{ inputs.docker-hub-token }}
-        SETUP_SNAPSHOT_DOCKER_IMAGE: ${{ inputs.setup-snapshot-docker-image }}
       run: bash "${{ github.action_path }}/prepare-orchestrator-runtime.sh"
