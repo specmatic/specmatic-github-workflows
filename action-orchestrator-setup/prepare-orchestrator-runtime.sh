@@ -29,8 +29,18 @@ cat > "$HOME/.m2/settings.xml" <<'EOF'
                     </snapshots>
                 </repository>
                 <repository>
-                    <id>specmatic-snapshots</id>
+                    <id>maven-snapshots</id>
                     <url>https://central.sonatype.com/repository/maven-snapshots</url>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>specmatic-snapshots</id>
+                    <url>https://repo.specmatic.io/snapshots</url>
                     <releases>
                         <enabled>false</enabled>
                     </releases>
@@ -78,6 +88,10 @@ allprojects {
             mavenContent {
                 snapshotsOnly()
             }
+        }
+        maven {
+            name = "specmaticSnapshots"
+            url = uri("https://repo.specmatic.io/snapshots")
         }
     }
 }
