@@ -66,7 +66,7 @@ runs:
         dotnet-quality: 'ga'
 
     - name: ReportGenerator
-      if: runner.os == 'Linux'
+      if: runner.os == 'Linux' && inputs.skipTest != 'true'
       uses: danielpalme/ReportGenerator-GitHub-Action@v5
       with:
         reports: build/reports/jacoco/*/*.xml;**/build/reports/jacoco/*/*.xml;build/reports/kover/*.xml;**/build/reports/kover/*.xml${{ inputs.reportgenerator-extra-reports != '' && format(';{0}', inputs.reportgenerator-extra-reports) || '' }}
@@ -74,12 +74,12 @@ runs:
         reporttypes: Html;MarkdownSummaryGithub;MarkdownAssembliesSummary
 
     - name: Add coverage to build summary
-      if: runner.os == 'Linux'
+      if: runner.os == 'Linux' && inputs.skipTest != 'true'
       shell: bash
       run: cat coveragereport/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
 
     - name: Add coverage comment to PR (linux only)
-      if: runner.os == 'Linux' && inputs.github-token-for-pr-comment != '' && github.event_name == 'pull_request'
+      if: runner.os == 'Linux' && inputs.skipTest != 'true' && inputs.github-token-for-pr-comment != '' && github.event_name == 'pull_request'
       run: gh pr comment $PR_NUMBER --edit-last --create-if-none --body-file coveragereport/Summary.md || true
       shell: bash
       env:
