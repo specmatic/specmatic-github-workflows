@@ -31,6 +31,11 @@ inputs:
     required: false
     default: ""
 
+  skipTest:
+    description: "Skip the default test/check tasks"
+    required: false
+    default: "false"
+
 runs:
   using: "composite"
   steps:
@@ -44,14 +49,14 @@ runs:
       shell: bash
       run: |
         ${{ inputs.pre-gradle-command }}
-        ./gradlew --no-daemon vulnScanSBOMScan check assemble ${{ inputs.gradle-extra-args }}
+        ./gradlew --no-daemon vulnScanSBOMScan ${{ inputs.skipTest != 'true' && 'check' || '' }} assemble ${{ inputs.gradle-extra-args }}
 
     - name: Test and assemble (MacOS/Windows)
       if: runner.os != 'Linux'
       shell: bash
       run: |
         ${{ inputs.pre-gradle-command }}
-        ./gradlew --no-daemon test assemble ${{ inputs.gradle-extra-args }}
+        ./gradlew --no-daemon ${{ inputs.skipTest != 'true' && 'test' || '' }} assemble ${{ inputs.gradle-extra-args }}
 
     - name: Setup .NET Core # Required to execute ReportGenerator
       if: runner.os == 'Linux'
