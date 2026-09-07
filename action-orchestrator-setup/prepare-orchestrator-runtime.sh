@@ -101,5 +101,5 @@ if [[ -n "${DOCKER_HUB_USERNAME:-}" && -n "${DOCKER_HUB_TOKEN:-}" ]]; then
   echo "${DOCKER_HUB_TOKEN}" | docker login -u "${DOCKER_HUB_USERNAME}" --password-stdin
 fi
 
-docker pull specmatic/enterprise-snapshot
-docker tag specmatic/enterprise-snapshot specmatic/enterprise:latest
+docker pull specmatic/enterprise-snapshots
+docker tag specmatic/enterprise-snapshots specmatic/enterprise:latest
