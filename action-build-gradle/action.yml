@@ -90,7 +90,10 @@ runs:
       if: github.event_name != 'pull_request'
       uses: gradle/actions/dependency-submission@v6
       with:
-        dependency-graph-continue-on-failure: true
+        # Reuse the same repository credentials/Gradle properties used by
+        # the build when resolving the dependency graph.
+        additional-arguments: ${{ inputs.gradle-extra-args }}
+        dependency-graph-continue-on-failure: false
 
     - name: 'Upload Gradle Artifact'
       uses: actions/upload-artifact@v7
