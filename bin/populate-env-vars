@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require_relative '../lib/logger'
+require 'shellwords'
 # usage:
 # eval "$(source ~/.specmatic-secrets; populate-credentials)"
 
@@ -28,7 +29,7 @@ mappings = {
 }
 
 exports = mappings.collect do |key, value|
-  "export #{key}='#{secret(value)}'"
+  "export #{key}=#{Shellwords.escape(secret(value))}"
 end
 
 puts exports.join("\n")
