@@ -30,6 +30,8 @@
 
 ## Scripts in the bin dir
 
+`bin/upload-secrets-to-all-repos` lists repositories through GitHub's paginated organization API and runs `bin/upload-secrets --repo OWNER/REPO` for each one, skipping the central `specmatic-secrets` repository. The authenticated `gh` token needs repository contents read access and Actions secret/variable write access on the target repositories.
+
 1. For the fetch scripts, create a `~/.m2/settings.xml` file. Be sure to define `SPECMATIC_GITHUB_USER` and `SPECMATIC_GITHUB_TOKEN` in your shell.
 
    ```xml
