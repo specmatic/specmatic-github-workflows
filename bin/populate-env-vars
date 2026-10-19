@@ -4,12 +4,6 @@ require 'shellwords'
 # usage:
 # eval "$(source ~/.specmatic-secrets; populate-credentials)"
 
-def secret(key)
-  value = ENV[key]
-  raise "#{key} not found or is blank!" if value.nil? || value.strip.empty?
-  value
-end
-
 mappings = {
   "ORG_GRADLE_PROJECT_mavenCentralUsername" => "SPECMATIC_MAVEN_CENTRAL_USERNAME",
   "ORG_GRADLE_PROJECT_mavenCentralPassword" => "SPECMATIC_MAVEN_CENTRAL_PASSWORD",
@@ -28,8 +22,20 @@ mappings = {
   "SPECMATIC_DOCKER_HUB_TOKEN" => "SPECMATIC_DOCKER_HUB_TOKEN"
 }
 
-exports = mappings.collect do |key, value|
-  "export #{key}=#{Shellwords.escape(secret(value))}"
+missing = []
+exports = mappings.each_with_object([]) do |(key, value), exports|
+  variable = ENV[value]
+  if variable.nil? || variable.strip.empty?
+    missing << value
+    next exports
+  end
+
+  exports << "export #{key}=#{Shellwords.escape(variable)}"
 end
 
-puts exports.join("\n")
+puts exports.join("\n") unless exports.empty?
+unless missing.empty?
+  STDERR.puts "Missing or blank environment variables:"
+  missing.uniq.each { |name| STDERR.puts "- #{name}" }
+  exit 1
+end
