@@ -19,6 +19,20 @@ cat > "$HOME/.m2/settings.xml" <<'EOF'
             <id>specmatic-snapshots</id>
             <repositories>
                 <repository>
+                    <id>specmatic-snapshots</id>
+                    <url>https://repo.specmatic.io/snapshots</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </repository>
+
+                <repository>
+                    <id>specmatic-releases</id>
+                    <url>https://repo.specmatic.io/releases</url>
+                </repository>
+
+                <repository>
                     <id>central</id>
                     <url>https://repo1.maven.org/maven2</url>
                     <releases>
@@ -28,6 +42,7 @@ cat > "$HOME/.m2/settings.xml" <<'EOF'
                         <enabled>false</enabled>
                     </snapshots>
                 </repository>
+
                 <repository>
                     <id>maven-snapshots</id>
                     <url>https://central.sonatype.com/repository/maven-snapshots</url>
@@ -36,18 +51,10 @@ cat > "$HOME/.m2/settings.xml" <<'EOF'
                     </releases>
                     <snapshots>
                         <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
                     </snapshots>
                 </repository>
-                <repository>
-                    <id>specmatic-snapshots</id>
-                    <url>https://repo.specmatic.io/snapshots</url>
-                    <releases>
-                        <enabled>false</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </repository>
+
             </repositories>
             <pluginRepositories>
                 <pluginRepository>
@@ -58,16 +65,6 @@ cat > "$HOME/.m2/settings.xml" <<'EOF'
                     </releases>
                     <snapshots>
                         <enabled>false</enabled>
-                    </snapshots>
-                </pluginRepository>
-                <pluginRepository>
-                    <id>specmatic-snapshots</id>
-                    <url>https://central.sonatype.com/repository/maven-snapshots</url>
-                    <releases>
-                        <enabled>false</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
                     </snapshots>
                 </pluginRepository>
             </pluginRepositories>
@@ -82,7 +79,22 @@ EOF
 mkdir -p "$HOME/.gradle/init.d"
 cat > "$HOME/.gradle/init.d/specmatic-snapshots.init.gradle" <<'EOF'
 allprojects {
+    configurations.configureEach { configuration ->
+        configuration.withDependencies { dependencies ->
+            def specmaticDependencies = dependencies.matching {
+                it.group == "io.specmatic" || it.group?.startsWith("io.specmatic.")
+            }
+            if (!specmaticDependencies.empty) {
+                specmaticDependencies.all { it.changing = true }
+                configuration.resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+            }
+        }
+    }
     repositories {
+        maven {
+            name = "specmaticReleases"
+            url = uri("https://repo.specmatic.io/releases")
+        }
         maven {
             url = uri("https://central.sonatype.com/repository/maven-snapshots")
             mavenContent {
