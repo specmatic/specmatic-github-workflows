@@ -33,17 +33,6 @@ cat > "$HOME/.m2/settings.xml" <<'EOF'
                 </repository>
 
                 <repository>
-                    <id>central</id>
-                    <url>https://repo1.maven.org/maven2</url>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </repository>
-
-                <repository>
                     <id>maven-snapshots</id>
                     <url>https://central.sonatype.com/repository/maven-snapshots</url>
                     <releases>
@@ -56,18 +45,6 @@ cat > "$HOME/.m2/settings.xml" <<'EOF'
                 </repository>
 
             </repositories>
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>central</id>
-                    <url>https://repo1.maven.org/maven2</url>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </pluginRepository>
-            </pluginRepositories>
         </profile>
     </profiles>
     <activeProfiles>
