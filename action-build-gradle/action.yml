@@ -40,7 +40,7 @@ runs:
         java-distribution: ${{ inputs.java-distribution }}
         runner-label: ${{ inputs.runner-label }}
 
-    - name: Test and assemble
+    - name: ${{ runner.environment == 'self-hosted-mac' && github.ref == 'refs/heads/main' && 'Check' || 'Test' }}
       shell: bash
       run: |
         ./gradlew --no-daemon ${{ runner.environment == 'self-hosted-mac' && github.ref == 'refs/heads/main' && 'check' || 'test' }} ${{ inputs.gradle-extra-args }}
