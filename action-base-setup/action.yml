@@ -40,7 +40,7 @@ runs:
       shell: bash
       run: |
         wget -O /usr/local/bin/semver https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver || wget -O $HOME/.local/bin/semver https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
-        chmod +x /usr/local/bin/semver $HOME/.local/bin/semver
+        chmod +x /usr/local/bin/semver || chmod +x $HOME/.local/bin/semver
 
     - uses: actions/checkout@v6
       with:
