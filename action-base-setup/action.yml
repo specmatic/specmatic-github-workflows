@@ -24,6 +24,18 @@ runs:
       if: runner.os == 'Linux'
       uses: docker/setup-qemu-action@v4
 
+    - name: Configure temporary Docker credentials
+      if: inputs.runner-label == 'self-hosted-mac'
+      shell: bash
+      run: |
+        umask 077
+        docker_config="$RUNNER_TEMP/docker-config"
+        mkdir -p "$docker_config"
+        # Preserve Docker Desktop plugin discovery with an isolated credentials config.
+        printf '%s\n' '{"auths":{},"cliPluginsExtraDirs":["/Applications/Docker.app/Contents/Resources/cli-plugins"]}' > "$docker_config/config.json"
+        echo "DOCKER_CONFIG=$docker_config" >> "$GITHUB_ENV"
+
+
     - name: Set up Docker Buildx
       if:  ${{ runner.os == 'Linux' || inputs.runner-label == 'self-hosted-mac' }}
       uses: docker/setup-buildx-action@v4
@@ -70,15 +82,6 @@ runs:
         # moreover, everything is local, and the environment is not wiped between builds, so external caching mechanism is not required
         cache-disabled: ${{ inputs.runner-label == 'self-hosted-mac' }}
 
-    - name: Configure temporary Docker credentials
-      if: inputs.runner-label == 'self-hosted-mac'
-      shell: bash
-      run: |
-        umask 077
-        docker_config="$RUNNER_TEMP/docker-config"
-        mkdir -p "$docker_config"
-        printf '{"auths":{}}\n' > "$docker_config/config.json"
-        echo "DOCKER_CONFIG=$docker_config" >> "$GITHUB_ENV"
 
     # - name: Cache trivy/grype executables
     #   if: runner.os == 'Linux'
