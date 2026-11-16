@@ -61,7 +61,7 @@ runs:
         reporttypes: Html;MarkdownSummaryGithub;MarkdownAssembliesSummary
 
     - name: Add coverage to build summary
-      if: ${{ inputs.runner-label == 'self-hosted-mac' }}
+      if: ${{ github.event_name == 'pull_request' && inputs.runner-label == 'self-hosted-mac' && inputs.github-token-for-pr-comment != '' }}
       shell: bash
       run: cat coveragereport/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
 
