@@ -40,20 +40,20 @@ runs:
         java-distribution: ${{ inputs.java-distribution }}
         runner-label: ${{ inputs.runner-label }}
 
-    - name: ${{ runner.environment == 'self-hosted-mac' && github.ref == 'refs/heads/main' && 'Check' || 'Test' }}
+    - name: ${{ inputs.runner-label == 'self-hosted-mac' && github.ref == 'refs/heads/main' && 'Check' || 'Test' }}
       shell: bash
       run: |
-        ./gradlew --no-daemon ${{ runner.environment == 'self-hosted-mac' && github.ref == 'refs/heads/main' && 'check' || 'test' }} ${{ inputs.gradle-extra-args }}
+        ./gradlew --no-daemon ${{ inputs.runner-label == 'self-hosted-mac' && github.ref == 'refs/heads/main' && 'check' || 'test' }} ${{ inputs.gradle-extra-args }}
 
     - name: Setup .NET Core # Required to execute ReportGenerator
-      if: ${{ runner.environment == 'self-hosted-mac' }}
+      if: ${{ inputs.runner-label == 'self-hosted-mac' }}
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 8.x
         dotnet-quality: 'ga'
 
     - name: ReportGenerator
-      if: ${{ github.event_name == 'pull_request' && runner.environment == 'self-hosted-mac' && inputs.github-token-for-pr-comment != '' }}
+      if: ${{ github.event_name == 'pull_request' && inputs.runner-label == 'self-hosted-mac' && inputs.github-token-for-pr-comment != '' }}
       uses: danielpalme/ReportGenerator-GitHub-Action@v5
       with:
         reports: build/reports/jacoco/*/*.xml;**/build/reports/jacoco/*/*.xml;build/reports/kover/*.xml;**/build/reports/kover/*.xml${{ inputs.reportgenerator-extra-reports != '' && format(';{0}', inputs.reportgenerator-extra-reports) || '' }}
@@ -61,12 +61,12 @@ runs:
         reporttypes: Html;MarkdownSummaryGithub;MarkdownAssembliesSummary
 
     - name: Add coverage to build summary
-      if: ${{ runner.environment == 'self-hosted-mac' }}
+      if: ${{ inputs.runner-label == 'self-hosted-mac' }}
       shell: bash
       run: cat coveragereport/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
 
     - name: Add coverage comment to PR (self-hosted-mac only)
-      if: ${{ github.event_name == 'pull_request' && runner.environment == 'self-hosted-mac' && inputs.github-token-for-pr-comment != '' }}
+      if: ${{ github.event_name == 'pull_request' && inputs.runner-label == 'self-hosted-mac' && inputs.github-token-for-pr-comment != '' }}
       run: gh pr comment $PR_NUMBER --edit-last --create-if-none --body-file coveragereport/Summary.md || true
       shell: bash
       env:
@@ -74,7 +74,7 @@ runs:
         PR_NUMBER: ${{ github.event.number }}
 
     - name: Generate and submit dependency graph
-      if: ${{ runner.environment == 'self-hosted-mac' && github.event_name != 'pull_request' }}
+      if: ${{ inputs.runner-label == 'self-hosted-mac' && github.event_name != 'pull_request' }}
       uses: gradle/actions/dependency-submission@v6
       with:
         # Reuse the same repository credentials/Gradle properties used by
