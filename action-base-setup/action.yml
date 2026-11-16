@@ -12,6 +12,11 @@ inputs:
     required: false
     default: "temurin"
 
+  runner-label:
+    description: "The label used to select the runner"
+    required: false
+    default: ""
+
 runs:
   using: "composite"
   steps:
@@ -33,20 +38,18 @@ runs:
       if: runner.os != 'Windows'
       shell: bash
       env:
-        RUNNER_KIND: ${{ runner.environment }}
+        RUNNER_OS: ${{ runner.os }}
       run: |
         url=https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
-        if [ "$RUNNER_KIND" = self-hosted-mac ]; then
-          semver="$HOME/.local/bin/semver"
-          if [ ! -f "$semver" ]; then
-            mkdir -p "$HOME/.local/bin"
-            wget -O "$semver" "$url"
-          fi
-        else
+        if [ "$RUNNER_OS" = Linux ]; then
           semver=/usr/local/bin/semver
-          if [ ! -f "$semver" ]; then
-            wget -O "$semver" "$url"
-          fi
+        else
+          semver="$HOME/.local/bin/semver"
+          mkdir -p "$HOME/.local/bin"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+        fi
+        if [ ! -f "$semver" ]; then
+          wget -O "$semver" "$url"
         fi
         chmod +x "$semver"
 
@@ -65,7 +68,7 @@ runs:
       with:
         # caches consume too much network bandwidth, so we disable it for our own runners.
         # moreover, everything is local, and the environment is not wiped between builds, so external caching mechanism is not required
-        cache-disabled: ${{ runner.environment == 'self-hosted-mac' }}
+        cache-disabled: ${{ inputs.runner-label == 'self-hosted-mac' }}
 
     # - name: Cache trivy/grype executables
     #   if: runner.os == 'Linux'

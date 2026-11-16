@@ -17,6 +17,11 @@ inputs:
     required: false
     default: "temurin"
 
+  runner-label:
+    description: "The label used to select the runner"
+    required: false
+    default: ""
+
   github-token-for-pr-comment:
     description: "GitHub token for posting comments on pull requests"
     required: false
@@ -33,6 +38,7 @@ runs:
       with:
         java-version: ${{ inputs.java-version }}
         java-distribution: ${{ inputs.java-distribution }}
+        runner-label: ${{ inputs.runner-label }}
 
     - name: Test and assemble
       shell: bash
