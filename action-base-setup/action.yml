@@ -23,12 +23,6 @@ runs:
       if: runner.os == 'Linux'
       uses: docker/setup-buildx-action@v4
 
-    - name: Setup git
-      run: |
-        git config --global user.email "github-service-account@specmatic.io"
-        git config --global user.name "Specmatic GitHub Service Account"
-      shell: bash
-
     - name: Set up JDK 17
       uses: actions/setup-java@v5
       with:
@@ -38,35 +32,59 @@ runs:
     - name: Download semver cli
       if: runner.os != 'Windows'
       shell: bash
+      env:
+        RUNNER_KIND: ${{ runner.environment }}
       run: |
-        wget -O /usr/local/bin/semver https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver || wget -O $HOME/.local/bin/semver https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
-        chmod +x /usr/local/bin/semver || chmod +x $HOME/.local/bin/semver
+        url=https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
+        if [ "$RUNNER_KIND" = self-hosted-mac ]; then
+          semver="$HOME/.local/bin/semver"
+          if [ ! -f "$semver" ]; then
+            mkdir -p "$HOME/.local/bin"
+            wget -O "$semver" "$url"
+          fi
+        else
+          semver=/usr/local/bin/semver
+          if [ ! -f "$semver" ]; then
+            wget -O "$semver" "$url"
+          fi
+        fi
+        chmod +x "$semver"
 
     - uses: actions/checkout@v6
       with:
         persist-credentials: false
 
+    - name: Setup git
+      run: |
+        git config --local user.email "github-service-account@specmatic.io"
+        git config --local user.name "Specmatic GitHub Service Account"
+      shell: bash
+
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v6
-
-    - name: Cache trivy/grype executables
-      if: runner.os == 'Linux'
-      uses: actions/cache@v5
       with:
-        path: |
-          ~/.specmatic-trivy
-          ~/.specmatic-grype
-        key: ${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-scanner-executables-v1-${{ github.run_id }}-${{ github.run_attempt }}
-        restore-keys: |
-          ${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-scanner-executables-v1-
+        # caches consume too much network bandwidth, so we disable it for our own runners.
+        # moreover, everything is local, and the environment is not wiped between builds, so external caching mechanism is not required
+        cache-disabled: ${{ runner.environment == 'self-hosted-mac' }}
 
-    - name: Cache trivy/grype databases
-      if: runner.os == 'Linux'
-      uses: actions/cache@v5
-      with:
-        path: |
-          ~/.cache/trivy
-          ~/.cache/grype
-        key: ${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-scanner-databases-v1-${{ github.run_id }}-${{ github.run_attempt }}
-        restore-keys: |
-          ${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-scanner-databases-v1-
+    # - name: Cache trivy/grype executables
+    #   if: runner.os == 'Linux'
+    #   uses: actions/cache@v5
+    #   with:
+    #     path: |
+    #       ~/.specmatic-trivy
+    #       ~/.specmatic-grype
+    #     key: ${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-scanner-executables-v1-${{ github.run_id }}-${{ github.run_attempt }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-scanner-executables-v1-
+
+    # - name: Cache trivy/grype databases
+    #   if: runner.os == 'Linux'
+    #   uses: actions/cache@v5
+    #   with:
+    #     path: |
+    #       ~/.cache/trivy
+    #       ~/.cache/grype
+    #     key: ${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-scanner-databases-v1-${{ github.run_id }}-${{ github.run_attempt }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-scanner-databases-v1-

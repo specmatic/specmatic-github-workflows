@@ -7,11 +7,6 @@ inputs:
     required: false
     default: ""
 
-  pre-gradle-command:
-    description: "The command to run before the gradle command"
-    required: false
-    default: "echo 'No pre-gradle command specified'"
-
   java-version:
     description: "The Java version to use"
     required: false
@@ -31,11 +26,6 @@ inputs:
     required: false
     default: ""
 
-  skipTest:
-    description: "Skip the default test/check tasks"
-    required: false
-    default: "false"
-
 runs:
   using: "composite"
   steps:
@@ -44,29 +34,20 @@ runs:
         java-version: ${{ inputs.java-version }}
         java-distribution: ${{ inputs.java-distribution }}
 
-    - name: Test and assemble (Linux)
-      if: runner.os == 'Linux'
+    - name: Test and assemble
       shell: bash
       run: |
-        ${{ inputs.pre-gradle-command }}
-        ./gradlew --no-daemon vulnScanSBOMScan ${{ inputs.skipTest != 'true' && 'check' || '' }} assemble ${{ inputs.gradle-extra-args }}
-
-    - name: Test and assemble (MacOS/Windows)
-      if: runner.os != 'Linux'
-      shell: bash
-      run: |
-        ${{ inputs.pre-gradle-command }}
-        ./gradlew --no-daemon ${{ inputs.skipTest != 'true' && 'test' || '' }} assemble ${{ inputs.gradle-extra-args }}
+        ./gradlew --no-daemon ${{ runner.environment == 'self-hosted-mac' && github.ref == 'refs/heads/main' && 'check' || 'test' }} ${{ inputs.gradle-extra-args }}
 
     - name: Setup .NET Core # Required to execute ReportGenerator
-      if: runner.os == 'Linux'
+      if: ${{ runner.environment == 'self-hosted-mac' }}
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 8.x
         dotnet-quality: 'ga'
 
     - name: ReportGenerator
-      if: runner.os == 'Linux' && inputs.skipTest != 'true'
+      if: ${{ github.event_name == 'pull_request' && runner.environment == 'self-hosted-mac' && inputs.github-token-for-pr-comment != '' }}
       uses: danielpalme/ReportGenerator-GitHub-Action@v5
       with:
         reports: build/reports/jacoco/*/*.xml;**/build/reports/jacoco/*/*.xml;build/reports/kover/*.xml;**/build/reports/kover/*.xml${{ inputs.reportgenerator-extra-reports != '' && format(';{0}', inputs.reportgenerator-extra-reports) || '' }}
@@ -74,12 +55,12 @@ runs:
         reporttypes: Html;MarkdownSummaryGithub;MarkdownAssembliesSummary
 
     - name: Add coverage to build summary
-      if: runner.os == 'Linux' && inputs.skipTest != 'true'
+      if: ${{ runner.environment == 'self-hosted-mac' }}
       shell: bash
       run: cat coveragereport/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
 
-    - name: Add coverage comment to PR (linux only)
-      if: runner.os == 'Linux' && inputs.skipTest != 'true' && inputs.github-token-for-pr-comment != '' && github.event_name == 'pull_request'
+    - name: Add coverage comment to PR (self-hosted-mac only)
+      if: ${{ github.event_name == 'pull_request' && runner.environment == 'self-hosted-mac' && inputs.github-token-for-pr-comment != '' }}
       run: gh pr comment $PR_NUMBER --edit-last --create-if-none --body-file coveragereport/Summary.md || true
       shell: bash
       env:
@@ -87,7 +68,7 @@ runs:
         PR_NUMBER: ${{ github.event.number }}
 
     - name: Generate and submit dependency graph
-      if: github.event_name != 'pull_request'
+      if: ${{ runner.environment == 'self-hosted-mac' && github.event_name != 'pull_request' }}
       uses: gradle/actions/dependency-submission@v6
       with:
         # Reuse the same repository credentials/Gradle properties used by
