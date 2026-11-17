@@ -43,7 +43,10 @@ runs:
     - name: ${{ inputs.runner-label == 'self-hosted-mac' && github.ref == 'refs/heads/main' && 'Check' || 'Test' }}
       shell: bash
       run: |
-        ./gradlew clean ${{ inputs.runner-label == 'self-hosted-mac' && github.ref == 'refs/heads/main' && 'check' || 'test' }} ${{ inputs.gradle-extra-args }}
+        echo "Cleaning the repository... (git clean -fddx)"
+        git clean -fddx
+        echo "Running Gradle task..."
+        ./gradlew ${{ inputs.runner-label == 'self-hosted-mac' && github.ref == 'refs/heads/main' && 'check' || 'test' }} ${{ inputs.gradle-extra-args }}
 
     - name: Setup .NET Core # Required to execute ReportGenerator
       if: ${{ inputs.runner-label == 'self-hosted-mac' }}
