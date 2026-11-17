@@ -80,7 +80,7 @@ runs:
       with:
         # caches consume too much network bandwidth, so we disable it for our own runners.
         # moreover, everything is local, and the environment is not wiped between builds, so external caching mechanism is not required
-        cache-disabled: ${{ inputs.runner-label == 'self-hosted-mac' }}
+        cache-disabled: ${{ inputs.runner-label == 'self-hosted-mac' || inputs.runner-label == 'self-hosted-windows' }}
 
 
     # - name: Cache trivy/grype executables
