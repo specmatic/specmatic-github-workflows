@@ -46,7 +46,7 @@ runs:
         echo "Cleaning the repository... (git clean -fddx)"
         git clean -fddx
         echo "Running Gradle task..."
-        ./gradlew ${{ inputs.runner-label == 'self-hosted-mac' && github.ref == 'refs/heads/main' && 'check' || 'test' }} ${{ inputs.gradle-extra-args }}
+        ./gradlew ${{ inputs.runner-label == 'self-hosted-mac' && github.ref == 'refs/heads/main' && 'check' || 'test koverXmlReport' }} ${{ inputs.gradle-extra-args }}
 
     - name: Setup .NET Core # Required to execute ReportGenerator
       if: ${{ inputs.runner-label == 'self-hosted-mac' }}
