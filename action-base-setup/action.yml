@@ -61,7 +61,7 @@ runs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
         fi
         if [ ! -f "$semver" ]; then
-          wget -O "$semver" "$url"
+          curl -fsSL -o "$semver" "$url"
         fi
         chmod +x "$semver"
 
