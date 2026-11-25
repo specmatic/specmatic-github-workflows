@@ -82,16 +82,16 @@ runs:
         # moreover, everything is local, and the environment is not wiped between builds, so external caching mechanism is not required
         cache-disabled: ${{ inputs.runner-label == 'self-hosted-mac' || inputs.runner-label == 'self-hosted-windows' }}
 
-    - name: Print info
-      shell: bash
-      run: |
-        echo "Docker info"
-        docker info || true
-        echo "Docker buildx info"
-        docker buildx info || true
-        echo "Docker path"
-        which docker
-        echo $PATH
+    # - name: Print info
+    #   shell: bash
+    #   run: |
+    #     echo "Docker info"
+    #     docker info || true
+    #     echo "Docker buildx info"
+    #     docker buildx info || true
+    #     echo "Docker path"
+    #     which docker
+    #     echo $PATH
 
 
     # - name: Cache trivy/grype executables
