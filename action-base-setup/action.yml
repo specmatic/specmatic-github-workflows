@@ -29,6 +29,7 @@ runs:
       shell: bash
       run: |
         docker info >/dev/null
+        echo "docker is at $(which docker)"
         echo "DOCKER_HOST=unix://${HOME}/.colima/default/docker.sock" >> "$GITHUB_ENV"
         echo "TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock" >> "$GITHUB_ENV"
         echo "TESTCONTAINERS_HOST_OVERRIDE=$(colima ls -j | jq -r '.address')" >> "$GITHUB_ENV"
