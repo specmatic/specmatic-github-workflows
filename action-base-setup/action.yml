@@ -37,7 +37,7 @@ runs:
         DOCKER_CONFIG=$RUNNER_TEMP/docker-config
         mkdir -p "$DOCKER_CONFIG"
         printf '{}\n' > "$DOCKER_CONFIG/config.json"
-        export echo "DOCKER_CONFIG=$DOCKER_CONFIG" >> "$GITHUB_ENV"
+        echo "DOCKER_CONFIG=$DOCKER_CONFIG" >> "$GITHUB_ENV"
 
     - name: Set up Docker Buildx
       if:  ${{ runner.os == 'Linux' }}
