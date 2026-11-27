@@ -24,17 +24,14 @@ runs:
       if: runner.os == 'Linux'
       uses: docker/setup-qemu-action@v4
 
-    # - name: Configure temporary Docker credentials
-    #   if: inputs.runner-label == 'self-hosted-mac'
-    #   shell: bash
-    #   run: |
-    #     umask 077
-    #     docker_config="$RUNNER_TEMP/docker-config"
-    #     mkdir -p "$docker_config"
-    #     # Preserve Docker Desktop plugin discovery with an isolated credentials config.
-    #     printf '%s\n' '{"auths":{},"cliPluginsExtraDirs":["/Applications/Docker.app/Contents/Resources/cli-plugins"]}' > "$docker_config/config.json"
-    #     echo "DOCKER_CONFIG=$docker_config" >> "$GITHUB_ENV"
-
+    - name: Configure colima and test containers
+      if: inputs.runner-label == 'self-hosted-mac'
+      shell: bash
+      run: |
+        docker info >/dev/null
+        echo "DOCKER_HOST=unix://${HOME}/.colima/default/docker.sock" >> "$GITHUB_ENV"
+        echo "TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock" >> "$GITHUB_ENV"
+        echo "TESTCONTAINERS_HOST_OVERRIDE=$(colima ls -j | jq -r '.address')" >> "$GITHUB_ENV"
 
     - name: Set up Docker Buildx
       if:  ${{ runner.os == 'Linux' }}
